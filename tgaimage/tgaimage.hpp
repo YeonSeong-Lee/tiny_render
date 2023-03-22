@@ -3,6 +3,8 @@
 
 #include <fstream>
 #include <iostream>
+
+#pragma pack(push, 1)
 typedef struct TGAHeader {
   unsigned char id_length;
   unsigned char color_map_type;
@@ -17,6 +19,7 @@ typedef struct TGAHeader {
   unsigned char bits_per_pixel;
   unsigned char image_descriptor;
 } TGAHeader;
+#pragma pack(pop)
 
 typedef struct TGAColor {
   union {
