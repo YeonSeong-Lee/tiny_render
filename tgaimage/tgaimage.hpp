@@ -1,7 +1,8 @@
 #ifndef TGAIMAGE_HPP
-#define TGAIMGAE_HPP
+#define TGAIMAGE_HPP
 
 #include <fstream>
+#include <iostream>
 typedef struct TGAHeader {
   unsigned char id_length;
   unsigned char color_map_type;
@@ -85,6 +86,6 @@ class TGAImage {
 
   bool load_rle_data(std::ifstream &in);
   bool unload_rle_data(std::ofstream &out);
-}
+};
 
 #endif
