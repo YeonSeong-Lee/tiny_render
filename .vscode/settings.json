@@ -1,7 +1,12 @@
 {
 	"cSpell.words": [
 		"bytespp",
+		"pixelcount",
 		"TGAIMAGE",
 		"TGAIMGAE"
-	]
+	],
+	"files.associations": {
+		"new": "cpp",
+		"fstream": "cpp"
+	}
 }
