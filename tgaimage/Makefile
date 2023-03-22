@@ -20,6 +20,10 @@ clean:
 	-rm -f $(TARGET)
 	-rm -f *.tga
 
+fclean:
+	$(MAKE) clean
+	-rm -f $(DESTDIR)$(TARGET)
+
 re:
 	$(MAKE) clean
 	$(MAKE) all
