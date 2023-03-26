@@ -1,5 +1,0 @@
-# ninja log v5
-0	508	1679790435400845661	CMakeFiles/tiny_render.dir/main.cpp.o	6becc62cf59fd261
-1	56	1679790553369712109	build.ninja	99887cb134c557ae
-2	573	1679790553949143272	CMakeFiles/tiny_render.dir/tgaimgae.cpp.o	b4aa86033d2d5e62
-574	614	1679790553994153953	tiny_render	fbb1f48169e8539b
