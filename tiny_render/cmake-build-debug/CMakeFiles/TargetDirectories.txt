@@ -1,0 +1,3 @@
+/goinfre/seongyle/tiny_render/tiny_render/cmake-build-debug/CMakeFiles/tiny_render.dir
+/goinfre/seongyle/tiny_render/tiny_render/cmake-build-debug/CMakeFiles/edit_cache.dir
+/goinfre/seongyle/tiny_render/tiny_render/cmake-build-debug/CMakeFiles/rebuild_cache.dir
