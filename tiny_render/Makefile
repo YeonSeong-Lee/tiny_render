@@ -3,7 +3,7 @@ CPPFLAGS     =
 LDFLAGS      =
 
 DESTDIR = ./
-TARGET  = main
+TARGET  = tiny_render 
 
 OBJECTS := $(patsubst %.cpp,%.o,$(wildcard *.cpp))
 
