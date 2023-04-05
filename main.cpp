@@ -42,7 +42,7 @@ void draw_line(Vec2i p0, Vec2i p1, TGAImage& image, TGAColor color) {
   }
 }
 
-void triangle(Vec3f* pts, float* z_buffer, TGAImage& image, float intensity,
+void triangle(Vec3i* pts, int* z_buffer, TGAImage& image, float intensity,
               Vec2i* uv) {
   Vec3i t0 = pts[0];
   Vec3i t1 = pts[1];
@@ -123,9 +123,9 @@ int main(int argc, char** argv) {
     model = new Model("obj/african_head.obj");
   }
 
-  float* z_buffer = new float[width * height];
-  for (int i = width * height; i == 0; i--) {
-    z_buffer[i] = -std::numeric_limits<float>::max();
+  int* z_buffer = new int[width * height];
+  for (int i = 0; i < width * height; i++) {
+    z_buffer[i] = std::numeric_limits<int>::min();
   }
 
   TGAImage image(width, height, TGAImage::RGB);
@@ -134,12 +134,12 @@ int main(int argc, char** argv) {
   for (int i = 0; i < model->nfaces(); i++) {
     std::vector<int> face = model->face(i);
     Vec3f world_coords[3];
-    Vec3f screen_coords[3];
+    Vec3i screen_coords[3];
     for (int j = 0; j < 3; j++) {
       Vec3f v = model->vert(face[j]);
       world_coords[j] = v;
-      for (int i = 0; i < 3; i++) {
-        screen_coords[i] = world2screen(model->vert(face[i]));
+      for (int j = 0; j < 3; j++) {
+        screen_coords[j] = world2screen(model->vert(face[j]));
       }
     }
     Vec3f n = (world_coords[2] - world_coords[0]) ^
