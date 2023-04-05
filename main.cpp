@@ -1,7 +1,7 @@
 #include <cmath>
 
 #include "Model.hpp"
-#include "geometry.hpp"
+#include "geometry.h"
 #include "tgaimage.hpp"
 
 Model* model = NULL;
@@ -10,14 +10,6 @@ const int height = 1024;
 const TGAColor white = TGAColor(255, 255, 255, 255);
 const TGAColor red = TGAColor(255, 0, 0, 255);
 const TGAColor green = TGAColor(0, 255, 0, 255);
-
-Vec3f barycentric(Vec3f* pts, Vec3f P) {
-  Vec3f u =
-      cross(Vec3f(pts[2].x - pts[0].x, pts[1].x - pts[0].x, pts[0].x - P.x),
-            Vec3f(pts[2].y - pts[0].y, pts[1].y - pts[0].y, pts[0].y - P.y));
-  if (std::abs(u.z) < 1) return Vec3f(-1, 1, 1);
-  return Vec3f(1.f - (u.x + u.y) / u.z, u.y / u.z, u.x / u.z);
-}
 
 void draw_line(Vec2i p0, Vec2i p1, TGAImage& image, TGAColor color) {
   bool steep = false;
@@ -50,28 +42,70 @@ void draw_line(Vec2i p0, Vec2i p1, TGAImage& image, TGAColor color) {
   }
 }
 
-void triangle(Vec3f* pts, float* z_buffer, TGAImage& image, TGAColor color) {
-  Vec2f bboxmin(std::numeric_limits<float>::max(),
-                std::numeric_limits<float>::max());
-  Vec2f bboxmax(-std::numeric_limits<float>::max(),
-                -std::numeric_limits<float>::max());
-  Vec2f clamp(image.get_width() - 1, image.get_height() - 1);
-  for (int i = 0; i < 3; i++) {
-    for (int j = 0; j < 2; j++) {
-      bboxmin[j] = std::max(0.f, std::min(bboxmin[j], pts[i][j]));
-      bboxmax[j] = std::min(clamp[j], std::max(bboxmax[j], pts[i][j]));
-    }
+void triangle(Vec3f* pts, float* z_buffer, TGAImage& image, float intensity,
+              Vec2i* uv) {
+  Vec3i t0 = pts[0];
+  Vec3i t1 = pts[1];
+  Vec3i t2 = pts[2];
+  Vec2i uv0 = uv[0];
+  Vec2i uv1 = uv[1];
+  Vec2i uv2 = uv[2];
+
+  if (t0.y == t1.y && t0.y == t2.y)
+    return;  // i dont care about degenerate triangles
+  if (t0.y > t1.y) std::swap(t0, t1);
+  if (t0.y > t1.y) {
+    std::swap(t0, t1);
+    std::swap(uv0, uv1);
   }
-  Vec3f P;
-  for (P.x = bboxmin.x; P.x <= bboxmax.x; P.x++) {
-    for (P.y = bboxmin.y; P.y <= bboxmax.y; P.y++) {
-      Vec3f bc_screen = barycentric(pts, P);
-      if (bc_screen.x < 0 || bc_screen.y < 0 || bc_screen.z < 0) continue;
-      P.z = 0;
-      for (int i = 0; i < 3; i++) P.z += pts[i][2] * bc_screen[i];
-      if (z_buffer[int(P.x + P.y * width)] < P.z) {
-        z_buffer[int(P.x + P.y * width)] = P.z;
-        image.set(P.x, P.y, color);
+  if (t0.y > t2.y) std::swap(t0, t2);
+  if (t0.y > t2.y) {
+    std::swap(t0, t2);
+    std::swap(uv0, uv2);
+  }
+  if (t1.y > t2.y) std::swap(t1, t2);
+  if (t1.y > t2.y) {
+    std::swap(t1, t2);
+    std::swap(uv1, uv2);
+  }
+
+  int total_height = t2.y - t0.y;
+  for (int i = 0; i < total_height; i++) {
+    for (int i = 0; i < total_height; i++) {
+      bool second_half = i > t1.y - t0.y || t1.y == t0.y;
+      int segment_height = second_half ? t2.y - t1.y : t1.y - t0.y;
+      float alpha = (float)i / total_height;
+      float beta = (float)(i - (second_half ? t1.y - t0.y : 0)) /
+                   segment_height;  // be careful: with above conditions no
+                                    // division by zero here	        float
+                                    // beta = (float)(i-(second_half ? t1.y-t0.y
+      Vec3i A = t0 + Vec3f(t2 - t0) * alpha;
+      Vec3i B =
+          second_half ? t1 + Vec3f(t2 - t1) * beta : t0 + Vec3f(t1 - t0) * beta;
+      if (A.x > B.x) std::swap(A, B);
+      Vec2i uvA = uv0 + (uv2 - uv0) * alpha;
+      Vec2i uvB =
+          second_half ? uv1 + (uv2 - uv1) * beta : uv0 + (uv1 - uv0) * beta;
+      if (A.x > B.x) {
+        std::swap(A, B);
+        std::swap(uvA, uvB);
+      }
+      for (int j = A.x; j <= B.x; j++) {
+        for (int j = A.x; j <= B.x; j++) {
+          float phi = B.x == A.x ? 1. : (float)(j - A.x) / (float)(B.x - A.x);
+          Vec3i P = Vec3f(A) + Vec3f(B - A) * phi;
+          Vec2i uvP = uvA + (uvB - uvA) * phi;
+          int idx = P.x + P.y * width;
+          if (z_buffer[idx] < P.z) {
+            if (z_buffer[idx] < P.z) {
+              z_buffer[idx] = P.z;
+              TGAColor color = model->diffuse(uvP);
+              image.set(P.x, P.y,
+                        TGAColor(color.r * intensity, color.g * intensity,
+                                 color.b * intensity));
+            }
+          }
+        }
       }
     }
   }
@@ -108,15 +142,17 @@ int main(int argc, char** argv) {
         screen_coords[i] = world2screen(model->vert(face[i]));
       }
     }
-    Vec3f n = cross((world_coords[2] - world_coords[0]),
-                    (world_coords[1] - world_coords[0]));
+    Vec3f n = (world_coords[2] - world_coords[0]) ^
+              (world_coords[1] - world_coords[0]);
     n.normalize();
 
     float intensity = n * light_dir;
     if (intensity > 0) {
-      triangle(
-          screen_coords, z_buffer, image,
-          TGAColor(intensity * 255, intensity * 255, intensity * 255, 255));
+      Vec2i uv[3];
+      for (int k = 0; k < 3; k++) {
+        uv[k] = model->uv(i, k);
+      }
+      triangle(screen_coords, z_buffer, image, intensity, uv);
     }
   }
   image.flip_vertically();  // i want to have the origin at the left bottom

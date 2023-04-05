@@ -1,6 +1,7 @@
 SYSCONF_LINK = c++
 CPPFLAGS     = -O3
-LDFLAGS      =
+LDFLAGS      = -O3
+LIBS 		 = -lm
 
 DESTDIR = ./
 TARGET  = tiny_render 
