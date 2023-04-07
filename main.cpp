@@ -7,6 +7,7 @@
 Model* model = NULL;
 const int width = 1024;
 const int height = 1024;
+const int depth = 255;
 const TGAColor white = TGAColor(255, 255, 255, 255);
 const TGAColor red = TGAColor(255, 0, 0, 255);
 const TGAColor green = TGAColor(0, 255, 0, 255);
@@ -40,6 +41,31 @@ void draw_line(Vec2i p0, Vec2i p1, TGAImage& image, TGAColor color) {
       error2 -= dx * 2;
     }
   }
+}
+
+Vec3f m2v(Matrix m) {
+  return Vec3f(m[0][0] / m[3][0], m[1][0] / m[3][0], m[2][0] / m[3][0]);
+}
+
+Matrix v2m(Vec3f v) {
+  Matrix m(4, 1);
+  m[0][0] = v.x;
+  m[1][0] = v.y;
+  m[2][0] = v.z;
+  m[3][0] = 1.f;
+  return m;
+}
+
+Matrix viewport(int x, int y, int w, int h) {
+  Matrix m = Matrix::identity(4);
+  m[0][3] = x + w / 2.f;
+  m[1][3] = y + h / 2.f;
+  m[2][3] = depth / 2.f;
+
+  m[0][0] = w / 2.f;
+  m[1][1] = h / 2.f;
+  m[2][2] = depth / 2.f;
+  return m;
 }
 
 void triangle(Vec3i* pts, int* z_buffer, TGAImage& image, float intensity,
@@ -130,6 +156,12 @@ int main(int argc, char** argv) {
 
   TGAImage image(width, height, TGAImage::RGB);
   Vec3f light_dir(0, 0, -1);  // define light_dir
+  Vec3f camera(0, 0, 3);      // define camera position
+
+  Matrix Projection = Matrix::identity(4);
+  Matrix ViewPort = viewport(width / 8, height / 8, width * 3 / 4,
+                             height * 3 / 4);  // define viewport
+  Projection[3][2] = -1.f / camera.z;
 
   for (int i = 0; i < model->nfaces(); i++) {
     std::vector<int> face = model->face(i);
@@ -138,9 +170,7 @@ int main(int argc, char** argv) {
     for (int j = 0; j < 3; j++) {
       Vec3f v = model->vert(face[j]);
       world_coords[j] = v;
-      for (int j = 0; j < 3; j++) {
-        screen_coords[j] = world2screen(model->vert(face[j]));
-      }
+      screen_coords[j] = m2v(ViewPort * Projection * v2m(v));
     }
     Vec3f n = (world_coords[2] - world_coords[0]) ^
               (world_coords[1] - world_coords[0]);
