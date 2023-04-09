@@ -223,5 +223,6 @@ int main(int argc, char** argv) {
                             // corner of the image
   image.write_tga_file("output.tga");
   delete model;
+  delete[] z_buffer;
   return 0;
 }
