@@ -24,6 +24,7 @@ class Model {
   TGAColor diffuse(Vec2i uv);
   Vec3f vert(int i);
   std::vector<int> face(int idx);
+  Vec3f norm(int iface, int nvert);
 };
 
 #endif
