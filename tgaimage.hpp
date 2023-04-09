@@ -40,7 +40,7 @@ typedef struct TGAColor {
            unsigned char A = 255)
       : b(B), g(G), r(R), a(A), bytespp(4) {}
 
-  TGAColor(unsigned int v, unsigned int bpp) : val(v), bytespp(bpp) {}
+  TGAColor(unsigned int v, unsigned int bpp = 1) : val(v), bytespp(bpp) {}
 
   TGAColor(const TGAColor &c) : val(c.val), bytespp(c.bytespp) {}
 
