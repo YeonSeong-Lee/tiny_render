@@ -57,6 +57,8 @@ typedef struct TGAColor {
     }
     return *this;
   }
+  
+  unsigned char &operator[](const int i) { return raw[i]; }
 
   TGAColor operator*(float intensity) const {
     TGAColor res = *this;
@@ -65,6 +67,7 @@ typedef struct TGAColor {
       res.raw[i] = raw[i] * intensity;
     }
     return res;
+  
   }
 } TGAColor;
 
