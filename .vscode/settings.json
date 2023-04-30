@@ -1,9 +1,15 @@
 {
 	"cSpell.words": [
+		"bbomin",
+		"bboxmax",
+		"bboxmin",
 		"bytespp",
+		"depthshader",
+		"Mshadow",
 		"nfaces",
 		"nthvert",
 		"pixelcount",
+		"shadowbuffer",
 		"TGAIMAGE",
 		"TGAIMGAE"
 	],
