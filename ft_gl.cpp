@@ -37,7 +37,7 @@ void lookat(Vec3f eye, Vec3f center, Vec3f up) {
 }
 
 Vec3f barycentric(Vec2f A, Vec2f B, Vec2f C, Vec2f P) {
-  Vec3i s[2];
+  Vec3f s[2];
   for (int i = 2; i--;) {
     s[i][0] = C[i] - A[i];
     s[i][1] = B[i] - A[i];
@@ -60,8 +60,8 @@ void triangle(Vec4f *pts, IShader &shader, TGAImage &image, float *zbuffer) {
                 -std::numeric_limits<float>::max());
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 2; j++) {
-      bboxmin[j] = std::min(bboxmin[j], pts[i][3]);
-      bboxmax[j] = std::max(bboxmax[j], pts[i][3]);
+      bboxmin[j] = std::min(bboxmin[j], pts[i][j] / pts[i][3]);
+      bboxmax[j] = std::max(bboxmax[j], pts[i][j] / pts[i][3]);
     }
   }
   Vec2i P;
