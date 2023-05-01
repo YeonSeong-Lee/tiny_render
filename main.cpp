@@ -51,7 +51,7 @@ struct Shader : public IShader {
     int idx =
         int(sb_p[0]) + int(sb_p[1]) * width;  // index in the shadowbuffer array
     float shadow = .3 + .7 * (shadowbuffer[idx] <
-                              sb_p[2]);  // magic coeff to avoid z-fighting
+                              sb_p[2] + 42.42);  // magic coeff to avoid z-fighting
     Vec2f uv = varying_uv * bar;         // interpolate uv for the current pixel
     Vec3f n = proj<3>(uniform_MIT * embed<4>(model->normal(uv)))
                   .normalize();  // normal
