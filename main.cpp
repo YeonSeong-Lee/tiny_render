@@ -85,7 +85,7 @@ int main(int argc, char **argv) {
         Vec2f dir(cos(a), sin(a));
         total += M_PI / 2 - max_elevation_angle(zbuffer, Vec2f(x, y), dir);
       }
-      total /= (M_PI / 2) * 8;
+      total /= M_PI * 4;
       total = pow(total, 100.f);
       image.set(x, y, TGAColor(total * 255, total * 255, total * 255));
     }
