@@ -5,13 +5,15 @@
 		"bboxmin",
 		"bytespp",
 		"depthshader",
+		"maxangle",
 		"Mshadow",
 		"nfaces",
 		"nthvert",
 		"pixelcount",
 		"shadowbuffer",
 		"TGAIMAGE",
-		"TGAIMGAE"
+		"TGAIMGAE",
+		"zshader"
 	],
 	"files.associations": {
 		"new": "cpp",
