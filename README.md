@@ -3,15 +3,8 @@
 C++로 구현한 소프트웨어 렌더러입니다.
 
 ## 결과물
+<img width="885" alt="Screenshot 2025-01-30 at 10 37 06 PM" src="https://github.com/user-attachments/assets/ffe859ba-e6b8-4cbf-aa60-07d8a9bbd906" />
 
-### Diablo3 모델 렌더링
-![Diablo3 렌더링](output.tga)
-
-### 아프리카 헤드 모델 렌더링
-![African Head 렌더링](african_head_output.tga)
-
-### 해골 모델 렌더링
-![Skull 렌더링](skull_output.tga)
 
 ## 참고 자료
 
